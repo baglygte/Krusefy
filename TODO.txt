@@ -1,0 +1,2 @@
+On startup, check if all necessary directories exist
+Krumote favicon
