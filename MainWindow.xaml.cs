@@ -7,21 +7,18 @@ using System.IO;
 using System.Windows.Forms;
 using dwg = System.Drawing; // Renamed this to resolve ambiguouty of "Color" type
 using System.Collections.Generic;
-using Krusefy.KMedoidPartitioning;
+using Krusefy.DBSCAN;
+using System.Runtime.InteropServices;
 
 namespace Krusefy
 {
     public partial class MainWindow : Window
     {
-        readonly MainWindowViewmodel viewModel = new MainWindowViewmodel();
         internal PlayButtonViewmodel playButtonViewmodel = new PlayButtonViewmodel();
         PlaylistHandler playlistHandler;
         public SolidColorBrush Brush { get; set; }
         public MainWindow()
         {
-            //this.viewModel.HeaderBack = new SolidColorBrush(Colors.Red);
-            this.DataContext = this.viewModel;
-
             playlistHandler = new PlaylistHandler(this);
             
             Server server = new Server(playlistHandler, playlistHandler.musicPlayer);
@@ -30,7 +27,22 @@ namespace Krusefy
             playlistHandler.Startup();
 
             this.btnPlay.DataContext = playButtonViewmodel;
+
+            // Prevent sleep
+            SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
         }
+
+        [FlagsAttribute]
+        public enum EXECUTION_STATE : uint
+        {
+            ES_AWAYMODE_REQUIRED = 0x00000040,
+            ES_CONTINUOUS = 0x80000000,
+            ES_DISPLAY_REQUIRED = 0x00000002,
+            ES_SYSTEM_REQUIRED = 0x00000001
+        }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
@@ -50,24 +62,13 @@ namespace Krusefy
             // Set the album art
             albumArtViewer.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
 
-            // Sample some pixels from the album art
-            dwg.Bitmap img = new dwg.Bitmap(path);
-            List<float[]> sampleColors = new List<float[]>();
-            for (int ww = 0; ww < img.Width; ww+=50)
-            {
-                for (int hh = 0; hh < img.Height; hh+=50)
-                {
-                    dwg.Color color = img.GetPixel(ww, hh);
-                    sampleColors.Add(new float[] { color.R, color.G, color.B });
-                }
-            }
-            KMedoidPartitioner kMedoidPartitioner = new KMedoidPartitioner(sampleColors);
-            var skrt = kMedoidPartitioner.GetClusterPoints(2);
-            float[] colorFloat = skrt[0];
-            SolidColorBrush brush = new SolidColorBrush(Color.FromRgb((byte)colorFloat[0], (byte)colorFloat[1], (byte)colorFloat[2]));
-            //this.viewModel.HeaderBack = brush;
-            this.Resources["PrimaryAccent"] = brush;
-            //brra.Color = brush.Color;
+            ClusterAnalyzer clusterAnalyzer = new ClusterAnalyzer();
+            var colors = clusterAnalyzer.GetAccentColors(new dwg.Bitmap(path));
+            Color primaryColor = Color.FromRgb((byte)colors[0].R, (byte)colors[0].G, (byte)colors[0].B);
+            Color secondaryColor = Color.FromRgb((byte)colors[1].R, (byte)colors[1].G, (byte)colors[1].B);
+
+            this.Resources["PrimaryAccent"] = new SolidColorBrush(primaryColor);
+            this.Resources["SecondaryAccent"] = new SolidColorBrush(secondaryColor);
         }
 
         public void SetWaveForm(string path)

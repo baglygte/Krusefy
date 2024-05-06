@@ -9,25 +9,6 @@
     <Window.Resources>
         <ResourceDictionary Source="StyleDictionary.xaml"/>
     </Window.Resources>
-    <!--<Window.Resources>
-        <ControlTemplate x:Key="MyVScrollBar" TargetType="{x:Type ScrollBar}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Border
-                    Background="#323232">
-                </Border>
-                <Track Name="PART_Track"
-                    IsDirectionReversed="True">
-                    <Track.Thumb>
-                        <Thumb  Style="{StaticResource MyThumb}">
-                        </Thumb>
-                    </Track.Thumb>
-                </Track>
-            </Grid>
-        </ControlTemplate>
-    </Window.Resources>-->
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -38,21 +19,17 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition/>
-                <RowDefinition MinHeight="50" MaxHeight="100"/>
+                <RowDefinition MinHeight="100" MaxHeight="150"/>
             </Grid.RowDefinitions>
 
-            <Image x:Name="seekbarWaveform" Grid.Row="1" Stretch="Fill"/>
-            <ProgressBar x:Name="seekbar"
-                        Opacity="0.5"
-                        Background="#323232"
-                        Foreground="#AAAAAA"
-                         Grid.Row="1"
-                        BorderThickness="0,0,0,0"
-                         MouseLeftButtonDown="seekbar_MouseLeftButtonDown"/>
+            <ProgressBar x:Name="seekbar" Grid.Row="1" BorderThickness="0"
+                        Background="{DynamicResource PrimaryAccent}" Foreground="{DynamicResource SecondaryAccent}"/>
 
+            <Image x:Name="seekbarWaveform" Grid.Row="1" Stretch="Fill" MouseLeftButtonDown="seekbar_MouseLeftButtonDown"/>
+            
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MinWidth="400" MaxWidth="400"/>
+                    <ColumnDefinition MinWidth="500" MaxWidth="500"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
@@ -69,11 +46,11 @@
                         <GridView>
                             <GridView.Columns>
                                 <GridViewColumn DisplayMemberBinding="{Binding Path=Queue}"
-                                                Width="20" Header="Q"/>
+                                                Width="20" Header="Q" />
                                 <GridViewColumn DisplayMemberBinding="{Binding Path=FirstIndex}" 
-                                                Width="43" Header="#"/>
+                                                Width="40" Header="#"/>
                                 <GridViewColumn DisplayMemberBinding="{Binding Path=Title}" 
-                                                Width="500" Header="Title"/>
+                                                Width="464" Header="Title"/>
                                 <GridViewColumn DisplayMemberBinding="{Binding Path=Time}" 
                                                 Width="52" Header="Time"/>
                                 <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}" 
@@ -89,48 +66,53 @@
 
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition MinHeight="400" MaxHeight="400"/>
+                        <RowDefinition MinHeight="500" MaxHeight="500"/>
+                        <RowDefinition/>
+                        <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
-                    <Image x:Name="albumArtViewer"
-                           MinWidth="400" MaxWidth="400"
-                       Grid.Row="0"
+                    <Image x:Name="albumArtViewer" Grid.Row="0"
                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 
-                    <Label x:Name="labelTitle" Content="Title" HorizontalAlignment="Center"
-                           FontWeight="Bold" FontSize="20" Foreground="#FFFFFF"
-                           Grid.Row="1" Margin="0,40,0,0"/>
-                    <Label x:Name="labelArtist" Content="Artist" HorizontalAlignment="Center"
-                           FontWeight="Normal" FontSize="16" Foreground="#FFFFFF"
-                           Grid.Row="1" Margin="0,10,0,0"/>
-                    <Label x:Name="labelAlbum" Content="Album" HorizontalAlignment="Center"
-                           FontWeight="Normal" FontSize="12" Foreground="#FFFFFF"
-                           Grid.Row="1" Margin="0,80,0,0"/>
+                    <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="1">
+                        <Label x:Name="labelTitle" Content="Title" HorizontalAlignment="Center" Padding="10"
+                           FontWeight="Bold" FontSize="10" Foreground="{DynamicResource SecondaryAccent}"/>
+                    </Viewbox>
+                    
+                    <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="2">
+                        <Label x:Name="labelArtist" Content="Artist" HorizontalAlignment="Center"  Padding="10"
+                               FontWeight="Bold" FontSize="20" Foreground="{DynamicResource SecondaryAccent}"/>
+                    </Viewbox>
 
-                    <Button x:Name="btnImport" Content="Import"
-                            Grid.Row="1"
+                    <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="3">
+                        <Label x:Name="labelAlbum" Content="Album" HorizontalAlignment="Center"  Padding="10"
+                           FontWeight="Bold" FontSize="12" Foreground="{DynamicResource SecondaryAccent}"/>
+                    </Viewbox>
+
+                    <Button x:Name="btnImport" Content="Import" Grid.Row="1"
                             VerticalAlignment="Top" HorizontalAlignment="Left"
                             Click="btnImport_Click"/>
-                    <Grid Grid.Row="2" MinHeight="40" MaxHeight="60">
+                    <Grid Grid.Row="4" MinHeight="40" MaxHeight="60">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Button x:Name="btnPrev"
-                            Grid.Column="0" Padding="-2"
+                            Grid.Column="0"
                             HorizontalAlignment="Center" Click="btnPrev_Click">
-                            <Image Source="images/prev.png"/>
+                            <Image Source="images/prev.png" Margin="-1"/>
                         </Button>
                         <Button x:Name="btnPlay"
-                            Grid.Column="1" BorderThickness="0" Padding="-2"
+                            Grid.Column="1"
                             HorizontalAlignment="Center" Click="btnPlay_Click">
                             <Image>
                                 <Image.Style>
                                     <Style TargetType="{x:Type Image}">
                                         <Setter Property="Source" Value="images/play.png"/>
+                                        <Setter Property="Margin" Value="-1"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Path=IsPlaying}" Value="True">
                                                 <Setter Property="Source" Value="images/pause.png"/>
@@ -141,9 +123,9 @@
                             </Image>
                         </Button>
                         <Button x:Name="btnNext"
-                            Grid.Column="2" BorderThickness="0" Padding="-2"
+                            Grid.Column="2" BorderThickness="0"
                             HorizontalAlignment="Center" Click="btnNext_Click">
-                            <Image Source="images/next.png"/>
+                            <Image Source="images/next.png" Margin="-1"/>
                         </Button>
                     </Grid>
                 </Grid>

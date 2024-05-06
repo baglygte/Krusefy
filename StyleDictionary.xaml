@@ -19,10 +19,10 @@
     <Style TargetType="{x:Type Label}">
         <Setter Property = "Foreground" Value = "#FFFFFF"/>
         <Setter Property = "Padding" Value="0"/>
-        <Setter Property = "Height" Value="18"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding Path=IsPlayingFrom}" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource SecondaryAccent}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryAccent}"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -52,8 +52,8 @@
                 <Setter Property="Background" Value="{DynamicResource PrimaryAccent}"/>
             </Trigger>
             <DataTrigger Binding="{Binding Path=IsPlaying}" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource SecondaryAccent}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccent}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryAccent}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccent}"/>
                 <Setter Property="BorderThickness" Value="1"/>
             </DataTrigger>
         </Style.Triggers>
@@ -69,7 +69,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="true">
                             <Setter Property="BorderThickness" Value="1"/>
-                            <Setter Property="BorderBrush" Value="{StaticResource SecondaryAccent}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccent}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" Value="{DynamicResource PrimaryAccent}"/>
@@ -79,4 +79,72 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource PrimaryAccent}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryAccent}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Grid x:Name="Grid">
+                        <Rectangle
+                        Width="Auto"
+                        Height="Auto"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Fill="Transparent" />
+                        <Border
+                        x:Name="ScrollBarRectangle"
+                        Width="Auto"
+                        Height="Auto"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="5" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Tag" Value="Horizontal">
+                            <Setter TargetName="ScrollBarRectangle" Property="Width" Value="Auto" />
+                            <Setter TargetName="ScrollBarRectangle" Property="Height" Value="7" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ScrollBar}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                    <Grid Width="10" Background="Blue">
+                        <Border BorderThickness="0" Background="#232323"/>
+                        <Track Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb Background="{DynamicResource SecondaryAccent}" Style="{StaticResource ScrollThumbs}"/>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
 </ResourceDictionary>

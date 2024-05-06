@@ -120,14 +120,10 @@
     </ApplicationDefinition>
     <Compile Include="DBSCAN\Cluster.cs" />
     <Compile Include="DBSCAN\ClusterAnalyzer.cs" />
-    <Compile Include="KMedoidPartitioning\Cluster.cs" />
-    <Compile Include="KMedoidPartitioning\DataPoint.cs" />
-    <Compile Include="KMedoidPartitioning\KMedoidPartitioner.cs" />
     <Compile Include="MusicPlayer.cs" />
     <Compile Include="PlayButtonViewmodel.cs" />
     <Compile Include="Playlist.cs" />
     <Compile Include="PlaylistHandler.cs" />
-    <Compile Include="MainWindowViewmodel.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="Server.cs" />

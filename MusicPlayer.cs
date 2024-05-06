@@ -9,6 +9,8 @@ using System.Windows.Threading;
 using System.IO;
 using System.Windows.Documents;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 
 namespace Krusefy
@@ -88,15 +90,23 @@ namespace Krusefy
             output.Play();
             nextCall = DateTime.Now.Ticks / 10000 + timeInterval;
             playbackTimer.Start();
-            
-            // Stuff from trying to create waveform seekbar
-            //mainWindow.seekbarWaveform.Source = null;
-            //string waveformpath = "C:\\Users\\bagly\\Documents\\C#\\Krusefy\\bin\\Debug\\waveform.png";
-            //File.Delete(waveformpath);
-            //Task waveFormThread = Task.Factory.StartNew(() => CreateWaveform(filePath));
-            //waveFormThread.Wait();
-            //BitmapImage waveform = BitmapFromUri(new Uri(waveformpath));
-            //mainWindow.seekbarWaveform.Source = waveform;
+
+            this.Waveforming(trackToPlay.Path);
+        }
+
+        private async void Waveforming(string filePath)
+        {
+            string waveformPath = "C:\\Users\\bagly\\Documents\\C#\\Krusefy\\bin\\Debug\\waveform.png";
+            if (File.Exists(waveformPath))
+            {
+                mainWindow.seekbarWaveform.Source = null;
+                File.Delete(waveformPath);
+            }
+
+            await Task.Run(() => CreateWaveform(filePath));
+
+            BitmapImage waveform = BitmapFromUri(new Uri(waveformPath));
+            mainWindow.seekbarWaveform.Source = waveform;
         }
 
         public BitmapImage BitmapFromUri(Uri source)
@@ -110,7 +120,6 @@ namespace Krusefy
         }
         void CreateWaveform(string filePath)
         {
-            
             using (var waveStream = new AudioFileReader(filePath))
             {
                 int width = 1920;
@@ -124,20 +133,21 @@ namespace Krusefy
                 Bitmap b = new Bitmap(width, height);
                 using (var g = Graphics.FromImage(b))
                 {
-                    g.FillRectangle(new SolidBrush(Color.White), 0, 0, b.Width, b.Height);
                     int x = 0;
 
                     while (x < width)
                     {
                         float peak = GetNextPeak(samplesPerPixel, provider);
 
-                        g.DrawLine(new Pen(new SolidBrush(Color.Black)), x, height/2, x, height/2 + peak * height);
-                        g.DrawLine(new Pen(new SolidBrush(Color.Black)), x, height/2, x, height/2 - peak * height );
-
+                        g.DrawLine(new Pen(new SolidBrush(Color.FromArgb(50, 50, 50))), x, height, x, height / 2 + peak * height);
+                        g.DrawLine(new Pen(new SolidBrush(Color.FromArgb(50, 50, 50))), x, 0, x, height / 2 - peak * height);
                         x++;
                     }
+                    g.Flush();
+                    b.Save("waveform.png", System.Drawing.Imaging.ImageFormat.Png);
+                    g.Dispose();
                 }
-                b.Save("waveform.png");
+                waveStream.Dispose();
             }
 
             float GetNextPeak(int samplesPerPixel, ISampleProvider provider)
