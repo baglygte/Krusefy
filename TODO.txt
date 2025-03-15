@@ -14,10 +14,8 @@ Clear queue
 Command window to show messages like
 	Found a .png image in this folder
 Volume slider
-Do more stuff asyncronously
-	when i doubleclick a track, everything freezes on till the file has been loaded
-	when starting the app - a lot of time is spent on reading playlist files to initialize playlist manager
 Timer doesn't stop after pausing - so when resuming, the next track plays if the timer is too high
-Dont include "$RECYCLE.BIN" in playlists (and "System Volume Information")
 Select multiple tracks - to add them to queue
 Lyrics panel
+ContextMenu style
+Enter to go into playlist ( in playlistviewer)

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Threading;
 
 
 namespace Krusefy
@@ -29,6 +30,11 @@ namespace Krusefy
         double trackPosition; // Current position in playing track in ms
         double trackLength; // Length of currently playing track in ms
         long nextCall;
+
+        private CancellationTokenSource waveformingCancellationTokenSource = new CancellationTokenSource();
+        private Task currentWaveformingTask = null;
+
+        private const string waveformFilename = "waveform.png";
 
         private MainWindowVM mainWindowVM;
 
@@ -64,7 +70,6 @@ namespace Krusefy
 
         internal async void PlayTrack(Track trackToPlay)
         {
- 
             if (trackToPlay == null) { return; }
             this.mainWindow.playButtonViewmodel.IsPlaying = true;
             this.mainWindow.labelArtist.Content = trackToPlay.Artist;
@@ -87,7 +92,7 @@ namespace Krusefy
                 this.mainWindow.SetAccentColors(trackToPlay.FindAlbumArt());
             });
 
-            Mp3FileReader mp3reader = await Task.Run(() => getMp3Reader(trackToPlay));
+            Mp3FileReader mp3reader = new Mp3FileReader(trackToPlay.Path);
             pcm = WaveFormatConversionStream.CreatePcmStream(mp3reader);
             stream = new BlockAlignReductionStream(pcm);
             output = new DirectSoundOut(200);
@@ -99,27 +104,53 @@ namespace Krusefy
             nextCall = DateTime.Now.Ticks / 10000 + timeInterval;
             playbackTimer.Start();
 
-            this.Waveforming(trackToPlay.Path);
+
+            await RunWaveformingAsync(trackToPlay.Path);
         }
 
-        private Mp3FileReader getMp3Reader(Track tracktoplay)
+        private async Task RunWaveformingAsync(string mp3FilePath)
         {
-            return new Mp3FileReader(tracktoplay.Path);
-        }
 
-        private async void Waveforming(string filePath)
-        {
-            string waveformPath = "C:\\Users\\bagly\\Documents\\C#\\Krusefy\\bin\\Debug\\waveform.png";
-            if (File.Exists(waveformPath))
+            if (currentWaveformingTask != null && !currentWaveformingTask.IsCompleted)
             {
-                mainWindow.seekbarWaveform.Source = null;
-                File.Delete(waveformPath);
+                waveformingCancellationTokenSource.Cancel();
+                try
+                {
+                    await currentWaveformingTask;
+                }
+                catch (OperationCanceledException)
+                {
+                    // Ignore
+                }
             }
 
-            await Task.Run(() => CreateWaveform(filePath));
+            waveformingCancellationTokenSource = new CancellationTokenSource();
+            currentWaveformingTask = Waveforming(mp3FilePath, waveformingCancellationTokenSource.Token);
+        }
 
-            BitmapImage waveform = BitmapFromUri(new Uri(waveformPath));
-            mainWindow.seekbarWaveform.Source = waveform;
+        private async Task Waveforming(string mp3FilePath, CancellationToken token)
+        {
+            try
+            {
+                token.ThrowIfCancellationRequested();
+                DirectoryInfo dirInfo = new DirectoryInfo(".");
+                string waveformPath = dirInfo.FullName + "\\" + waveformFilename;
+                if (File.Exists(waveformPath))
+                {
+                    mainWindow.seekbarWaveform.Source = null;
+                    File.Delete(waveformPath);
+                }
+
+                await Task.Run(() => CreateWaveform(mp3FilePath));
+
+                BitmapImage waveform = BitmapFromUri(new Uri(waveformPath));
+                mainWindow.seekbarWaveform.Source = waveform;
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("Waveforming cancelled");
+            }
+
         }
 
         public BitmapImage BitmapFromUri(Uri source)

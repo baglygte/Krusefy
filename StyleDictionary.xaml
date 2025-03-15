@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <SolidColorBrush x:Key="PrimaryAccent">#232323</SolidColorBrush>
     <SolidColorBrush x:Key="SecondaryAccent">#FFFFFF</SolidColorBrush>
+
+    <FontFamily x:Key="GlobalFont">Century Gothic</FontFamily>
+    
     <Style TargetType="{x:Type GridViewColumnHeader}">
         <Setter Property="Template">
             <Setter.Value>
@@ -9,7 +12,7 @@
                     <TextBlock Text="{TemplateBinding Content}" Width="{TemplateBinding Width}"
                Padding="3" FontSize="16" FontWeight="Bold"
                Background="{DynamicResource PrimaryAccent}" Foreground="{DynamicResource SecondaryAccent}"
-               TextAlignment="Center" FontFamily="Century Gothic">
+               TextAlignment="Center" FontFamily="{StaticResource GlobalFont}">
                     </TextBlock>
                 </ControlTemplate>
             </Setter.Value>
@@ -20,6 +23,7 @@
         <Setter Property = "Foreground" Value = "#FFFFFF"/>
         <Setter Property = "Padding" Value="0"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="{StaticResource GlobalFont}"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding Path=IsPlayingFrom}" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource PrimaryAccent}"/>
@@ -38,6 +42,7 @@
         <Setter Property = "Foreground" Value = "#FFFFFF"/>
         <Setter Property = "Padding" Value="0,2,0,2"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="{StaticResource GlobalFont}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">

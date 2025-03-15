@@ -157,6 +157,10 @@
     </Compile>
     <Compile Include="PlaylistContentViewerVM.cs" />
     <Compile Include="PlaylistHandler.cs" />
+    <Compile Include="PlaylistViewer.xaml.cs">
+      <DependentUpon>PlaylistViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PlaylistViewerVM.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="Server.cs" />
@@ -166,6 +170,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PlaylistContentViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlaylistViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
