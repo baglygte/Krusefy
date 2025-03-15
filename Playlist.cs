@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Krusefy
 {
-    internal class Playlist
+    public class Playlist
     {
-        internal List<Track> Tracks { get; private set; }
+        public List<Track> Tracks { get; private set; }
         public string Name { get; set; }
         internal string ArtistDir { get; set; }
         public bool IsPlayingFrom { get; set; }
@@ -28,11 +31,12 @@ namespace Krusefy
             {
                 string[] splitLine = line.Split(new string[] { "||" }, StringSplitOptions.None);
                 Track newTrack = new Track(splitLine);
+                if (!File.Exists(newTrack.Path)) { continue; }
                 newTrack.InPlaylist = this;
                 this.Tracks.Add(newTrack);
             }
             this.Tracks = this.Tracks.OrderBy(x => x.FirstIndex).ToList();
-            this.Tracks = this.Tracks.OrderBy(x => x.Year).ToList();
+            this.Tracks = this.Tracks.OrderBy(x => x.Album).ToList();
         }
 
         internal Track GetNextTrack(Track currentlyPlayingTrack)
@@ -69,8 +73,19 @@ namespace Krusefy
             string playlistPath = ".\\playlists\\" + this.Name + ".txt";
 
             if (!Directory.Exists(this.ArtistDir)) { return; }
+
             StreamWriter sw = new StreamWriter(playlistPath);
-            string[] singlePaths = Directory.GetFiles(this.ArtistDir);
+            string[] singlePaths;
+
+            try
+            {
+                singlePaths = Directory.GetFiles(this.ArtistDir);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            
 
             foreach (string singlePath in singlePaths)
             {
@@ -172,6 +187,5 @@ namespace Krusefy
             await swJSON.WriteLineAsync("]");
             swJSON.Close();
         }
-
     }
 }

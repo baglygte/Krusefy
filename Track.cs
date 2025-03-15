@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Krusefy
 {
-    internal class Track
+    public class Track : INotifyPropertyChanged
     {
-        public string Queue { get; set; }
+        private bool _isPlaying;
+        private string _queue;
+
+        public string Queue { get { return _queue; } set { _queue = value; OnPropertyChanged(); } }
         public int FirstIndex { get; set; }
         public string Title { get; set; }
         public string Time {  get; set; }
@@ -18,7 +24,7 @@ namespace Krusefy
         public string Year { get; set; }
         internal string Path { get; set; }
         internal Playlist InPlaylist { get; set; }
-        public bool IsPlaying { get; set; }
+        public bool IsPlaying { get { return _isPlaying; } set { _isPlaying = value; OnPropertyChanged(); } }
 
         internal Track(string[] splitLine)
         {
@@ -56,6 +62,41 @@ namespace Krusefy
             {
                 return int.Parse(splitIndex[1]);
             }
+        }
+
+        internal string FindAlbumArt()
+        {
+            //mainWindow.Dispatcher.Invoke(() =>
+            //{
+            //    mainWindow.SetAlbumArt(path);
+            //    mainWindow.SetAccentColors(path);
+            //});
+            // Look for album art in same folder as track
+            string[] splitString = this.Path.Split('\\');
+            string albumPath = null;
+            for (int i = 0; i < splitString.Length - 1; i++)
+            {
+                albumPath += splitString[i] + '\\';
+            }
+            string[] files = Directory.GetFiles(albumPath);
+            foreach (string path in files)
+            {
+                splitString = path.Split('.');
+                string fileType = splitString[splitString.Length - 1].ToLower();
+                if (fileType.EndsWith("jpg") || fileType.EndsWith("jpeg") || fileType.EndsWith("png"))
+                {
+                    return path;
+                }
+            }
+
+            return null;
+        }
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

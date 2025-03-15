@@ -16,13 +16,15 @@ namespace Krusefy
     {
         internal List<Playlist> Playlists = new List<Playlist>();
         public MainWindow mainWindow;
+        public MainWindowVM mainWindowVM;
         public MusicPlayer musicPlayer;
-        internal Playlist CurrentlyPlayingPlaylist { get; set; }
         public char driveLetter;
-        public PlaylistHandler(MainWindow m)
+
+        public PlaylistHandler(MainWindow m, MainWindowVM mainWindowVM)
         {
             this.mainWindow = m;
-            this.musicPlayer = new MusicPlayer(m);
+            this.mainWindowVM = mainWindowVM;
+            this.musicPlayer = m.MusicPlayer;
         }
         public void Startup()
         {
@@ -68,11 +70,6 @@ namespace Krusefy
                 this.Playlists.Add(playlist);
                 mainWindow.playlistManager.Items.Refresh();
             }
-        }
-
-        internal void SetActivePlaylist(Playlist playlist)
-        {
-            this.mainWindow.playlistViewer.ItemsSource = playlist.Tracks;
         }
         
         private void EmptyDirectory(DirectoryInfo di)

@@ -9,21 +9,34 @@ using dwg = System.Drawing; // Renamed this to resolve ambiguouty of "Color" typ
 using System.Collections.Generic;
 using Krusefy.DBSCAN;
 using System.Runtime.InteropServices;
+using System.Windows.Shapes;
 
 namespace Krusefy
 {
     public partial class MainWindow : Window
     {
-        internal PlayButtonViewmodel playButtonViewmodel = new PlayButtonViewmodel();
-        PlaylistHandler playlistHandler;
+        internal PlayButtonVM playButtonViewmodel = new PlayButtonVM();
+        private PlaylistHandler playlistHandler;
         public SolidColorBrush Brush { get; set; }
+        public MusicPlayer MusicPlayer { get; set; }
+
         public MainWindow()
         {
-            playlistHandler = new PlaylistHandler(this);
-            
-            Server server = new Server(playlistHandler, playlistHandler.musicPlayer);
-            server.Start();
             InitializeComponent();
+
+            MainWindowVM mainWindowVM = new MainWindowVM();
+            
+            mainWindowVM.PlaylistContentViewerVM = new PlaylistContentViewerVM();
+            mainWindowVM.AlbumArtViewerVM = new AlbumArtViewerVM();
+
+            DataContext = mainWindowVM;
+
+            MusicPlayer = new MusicPlayer(this, mainWindowVM);
+            playlistHandler = new PlaylistHandler(this, mainWindowVM);
+            
+            //Server server = new Server(playlistHandler, playlistHandler.musicPlayer);
+            //server.Start();
+            
             playlistHandler.Startup();
 
             this.btnPlay.DataContext = playButtonViewmodel;
@@ -44,7 +57,7 @@ namespace Krusefy
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
-        private void btnImport_Click(object sender, RoutedEventArgs e)
+        private void BtnImport_Click(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog folderDiag = new FolderBrowserDialog();
             folderDiag.SelectedPath = "C:\\\\";
@@ -57,11 +70,8 @@ namespace Krusefy
             }
         }
 
-        public void SetAlbumArt(string path)
+        public void SetAccentColors(string path)
         {
-            // Set the album art
-            albumArtViewer.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
-
             ClusterAnalyzer clusterAnalyzer = new ClusterAnalyzer();
             var colors = clusterAnalyzer.GetAccentColors(new dwg.Bitmap(path));
             Color primaryColor = Color.FromRgb((byte)colors[0].R, (byte)colors[0].G, (byte)colors[0].B);
@@ -77,55 +87,54 @@ namespace Krusefy
             seekbarWaveform.Source = waveform;
         }
 
-        private void playlistManager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void PlaylistManager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (playlistManager.SelectedItem != null)
             {
                 Playlist selectedPlaylist = (Playlist)playlistManager.SelectedItem;
-                playlistHandler.SetActivePlaylist(selectedPlaylist);
+                
+                MainWindowVM mainWindowVM = (MainWindowVM)DataContext;
+                PlaylistContentViewerVM playlistContentViewerVM = mainWindowVM.PlaylistContentViewerVM;
+                playlistContentViewerVM.Playlist = selectedPlaylist;
             }
         }
 
-        private void playlistViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (playlistViewer.SelectedItem == null) { return; }
-
-            playlistHandler.musicPlayer.PlayTrack((Track)playlistViewer.SelectedItem);
-        }
-
-        private void btnPlay_Click(object sender, RoutedEventArgs e)
+        private void BtnPlay_Click(object sender, RoutedEventArgs e)
         {
             playlistHandler.musicPlayer.PlayPause();
         }
 
-        private void btnNext_Click(object sender, RoutedEventArgs e)
+        private void BtnNext_Click(object sender, RoutedEventArgs e)
         {
             playlistHandler.musicPlayer.Next();
         }
 
-        private void btnPrev_Click(object sender, RoutedEventArgs e)
+        private void BtnPrev_Click(object sender, RoutedEventArgs e)
         {
             playlistHandler.musicPlayer.Prev();
         }
 
-        private void seekbar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Seekbar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             double positionPercentage = e.GetPosition(seekbar).X/seekbar.ActualWidth;
             seekbar.Value = positionPercentage * seekbar.Maximum;
             playlistHandler.musicPlayer.SeekTo(positionPercentage);
         }
 
-        private void cntxtRemoveFromQueue_Click(object sender, RoutedEventArgs e)
+        private void NowPlaying_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (playlistViewer.SelectedItem == null) { return;}
-            playlistHandler.musicPlayer.RemoveFromQueue((Track)playlistViewer.SelectedItem);
-        }
+            //if (playlistHandler.musicPlayer.CurrentlyPlayingTrack == null) { return; }
 
-        private void cntxtAddToQueue_Click(object sender, RoutedEventArgs e)
-        {
-            if (playlistViewer.SelectedItem == null) { return; }
+            //playlistHandler.SetActivePlaylist(playlistHandler.musicPlayer.CurrentlyPlayingTrack.InPlaylist);
 
-            playlistHandler.musicPlayer.AddToQueue((Track)playlistViewer.SelectedItem);
+            //if (!(DataContext is MainWindowVM)) { return; }
+
+            //Track currentlyPlayingTrack = MusicPlayer.CurrentlyPlayingTrack;
+            //MainWindowVM mainWindowVM = DataContext as MainWindowVM;
+            //Dispatcher.Invoke(() =>
+            //{
+            //    mainWindowVM.AlbumArtViewerVM.LoadImageFromPath(currentlyPlayingTrack.FindAlbumArt());
+            //});
         }
     }
 }

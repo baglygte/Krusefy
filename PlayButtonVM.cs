@@ -8,13 +8,13 @@ using System.Windows.Media;
 
 namespace Krusefy
 {
-    internal class PlayButtonViewmodel : INotifyPropertyChanged
+    internal class PlayButtonVM : INotifyPropertyChanged
     {
-        private bool _IsPlaying;
+        private bool _isPlaying;
         public bool IsPlaying
         {
-            get { return _IsPlaying; }
-            set { this._IsPlaying = value; this.OnPropertyChanged("IsPlaying"); }
+            get => _isPlaying;
+            set { this._isPlaying = value; this.OnPropertyChanged("IsPlaying"); }
         }
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

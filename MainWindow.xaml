@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Krusefy" xmlns:sys="clr-namespace:System;assembly=netstandard"
+        xmlns:local="clr-namespace:Krusefy" xmlns:sys="clr-namespace:System;assembly=netstandard" d:DataContext="{d:DesignInstance Type=local:MainWindowVM}"
         mc:Ignorable="d"
         Title="Krusefy Premium" Width="1280" Height="720" Background="#323232">
     <Window.Resources>
@@ -18,96 +18,86 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition MinHeight="100" MaxHeight="150"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition MaxHeight="150"/>
+                <RowDefinition Height="15"/>
             </Grid.RowDefinitions>
 
             <ProgressBar x:Name="seekbar" Grid.Row="1" BorderThickness="0"
                         Background="{DynamicResource PrimaryAccent}" Foreground="{DynamicResource SecondaryAccent}"/>
 
-            <Image x:Name="seekbarWaveform" Grid.Row="1" Stretch="Fill" MouseLeftButtonDown="seekbar_MouseLeftButtonDown"/>
+            <Image x:Name="seekbarWaveform" Grid.Row="1" Stretch="Fill" MouseLeftButtonDown="Seekbar_MouseLeftButtonDown"/>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="55"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="consoleLine" Text="consoleLine" Grid.Column="0" Foreground="#FFFFFF" VerticalAlignment="Center"></TextBlock>
+                <TextBlock x:Name="trackTime" Text="0:33/4:22" Grid.Column="1" Foreground="#FFFFFF" VerticalAlignment="Center" HorizontalAlignment="Right"></TextBlock>
+            </Grid>
             
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MinWidth="500" MaxWidth="500"/>
+                    <ColumnDefinition Width="{Binding ElementName=measurer, Path=ActualHeight}"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <ListView x:Name="playlistViewer" Grid.Column="1" SelectionMode="Single" 
-                          Background="#323232" Foreground="#FFFFFF"
-                          BorderThickness="0" MouseDoubleClick="playlistViewer_MouseDoubleClick">
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Add to queue" Click="cntxtAddToQueue_Click"/>
-                            <MenuItem Header="Remove from queue" Click="cntxtRemoveFromQueue_Click"/>
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                    <ListView.View>
-                        <GridView>
-                            <GridView.Columns>
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=Queue}"
-                                                Width="20" Header="Q" />
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=FirstIndex}" 
-                                                Width="40" Header="#"/>
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=Title}" 
-                                                Width="464" Header="Title"/>
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=Time}" 
-                                                Width="52" Header="Time"/>
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}" 
-                                                Width="299" Header="Artist"/>
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=Album}" 
-                                                Width="279" Header="Album"/>
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=Year}" 
-                                                Width="47" Header="Year"/>
-                            </GridView.Columns>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-
+                <local:PlaylistContentViewer DataContext="{Binding PlaylistContentViewerVM}" Grid.Column="1"/>
+                
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition MinHeight="500" MaxHeight="500"/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition MaxHeight="500" Height="5*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
+                    <Rectangle Name="measurer"/> <!-- Used to set width of encapsulating grid -->
 
-                    <Image x:Name="albumArtViewer" Grid.Row="0"
-                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                    <local:AlbumArtViewer DataContext="{Binding AlbumArtViewerVM}" Grid.Row="0"/>
 
                     <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="1">
                         <Label x:Name="labelTitle" Content="Title" HorizontalAlignment="Center" Padding="10"
-                           FontWeight="Bold" FontSize="10" Foreground="{DynamicResource SecondaryAccent}"/>
+                               Style="{StaticResource NowPlaying}"
+                           FontWeight="Bold" FontSize="10"
+                               MouseLeftButtonDown="NowPlaying_MouseLeftButtonDown"/>
                     </Viewbox>
                     
                     <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="2">
                         <Label x:Name="labelArtist" Content="Artist" HorizontalAlignment="Center"  Padding="10"
-                               FontWeight="Bold" FontSize="20" Foreground="{DynamicResource SecondaryAccent}"/>
+                               FontWeight="Bold" FontSize="20"
+                               Style="{StaticResource NowPlaying}"
+                               MouseLeftButtonDown="NowPlaying_MouseLeftButtonDown"/>
                     </Viewbox>
 
                     <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="3">
                         <Label x:Name="labelAlbum" Content="Album" HorizontalAlignment="Center"  Padding="10"
-                           FontWeight="Bold" FontSize="12" Foreground="{DynamicResource SecondaryAccent}"/>
+                           FontWeight="Bold" FontSize="12"
+                           Style="{StaticResource NowPlaying}"
+                           MouseLeftButtonDown="NowPlaying_MouseLeftButtonDown"/>
                     </Viewbox>
 
-                    <Button x:Name="btnImport" Content="Import" Grid.Row="1"
-                            VerticalAlignment="Top" HorizontalAlignment="Left"
-                            Click="btnImport_Click"/>
                     <Grid Grid.Row="4" MinHeight="40" MaxHeight="60">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
+                        <Button x:Name="btnVolume"
+                                Grid.Column="0"
+                                HorizontalAlignment="Center">
+                            <Image Source="images/volume.png" Margin="-1"/>
+                        </Button>
                         <Button x:Name="btnPrev"
-                            Grid.Column="0"
-                            HorizontalAlignment="Center" Click="btnPrev_Click">
+                            Grid.Column="1"
+                            HorizontalAlignment="Center" Click="BtnPrev_Click">
                             <Image Source="images/prev.png" Margin="-1"/>
                         </Button>
                         <Button x:Name="btnPlay"
-                            Grid.Column="1"
-                            HorizontalAlignment="Center" Click="btnPlay_Click">
+                            Grid.Column="2"
+                            HorizontalAlignment="Center" Click="BtnPlay_Click">
                             <Image>
                                 <Image.Style>
                                     <Style TargetType="{x:Type Image}">
@@ -123,9 +113,14 @@
                             </Image>
                         </Button>
                         <Button x:Name="btnNext"
-                            Grid.Column="2" BorderThickness="0"
-                            HorizontalAlignment="Center" Click="btnNext_Click">
+                            Grid.Column="3" BorderThickness="0"
+                            HorizontalAlignment="Center" Click="BtnNext_Click">
                             <Image Source="images/next.png" Margin="-1"/>
+                        </Button>
+                        <Button x:Name="btnSettings"
+                            Grid.Column="4" BorderThickness="0"
+                            HorizontalAlignment="Center" Click="BtnImport_Click">
+                            <Image Source="images/gear.png" Margin="-1"/>
                         </Button>
                     </Grid>
                 </Grid>
@@ -135,12 +130,13 @@
         <ListBox x:Name="playlistManager"
                   Grid.Column="1"
                   Background="#323232" 
-                  BorderThickness="0" Margin="0"
+                  BorderThickness="0" Margin="1"
                   MinWidth="200"
-                  MouseDoubleClick="playlistManager_MouseDoubleClick">
+                  MouseDoubleClick="PlaylistManager_MouseDoubleClick"
+                  TextSearch.TextPath="Name">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Label Content="{Binding Name}"/>
+                    <Label Content="{Binding Name}" Width="170"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

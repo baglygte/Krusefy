@@ -1,2 +1,23 @@
 On startup, check if all necessary directories exist
-Krumote favicon
+Multimedia keys (and space to pause)
+Dont sleep
+MP3 tag editing
+Web app
+Code refactoring
+	Implement MVVM properly
+Show current time / track length  "0:33/4:23"
+Launch program opens last open playlist
+Preload next song in queue
+Play track as async task
+Prefer bright accent colors for text
+Clear queue
+Command window to show messages like
+	Found a .png image in this folder
+Volume slider
+Do more stuff asyncronously
+	when i doubleclick a track, everything freezes on till the file has been loaded
+	when starting the app - a lot of time is spent on reading playlist files to initialize playlist manager
+Timer doesn't stop after pausing - so when resuming, the next track plays if the timer is too high
+Dont include "$RECYCLE.BIN" in playlists (and "System Volume Information")
+Select multiple tracks - to add them to queue
+Lyrics panel

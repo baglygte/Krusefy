@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 
 namespace Krusefy
@@ -21,7 +22,7 @@ namespace Krusefy
         DirectSoundOut output = null;
         WaveStream pcm = null;
         DispatcherTimer playbackTimer;
-        private Track CurrentlyPlayingTrack { get; set; }
+        internal Track CurrentlyPlayingTrack { get; set; }
         internal List<Track> Queue = new List<Track>();
         MainWindow mainWindow;
         long timeInterval = 200; //ms interval of how often to update seekbar position
@@ -29,10 +30,14 @@ namespace Krusefy
         double trackLength; // Length of currently playing track in ms
         long nextCall;
 
-        public MusicPlayer(MainWindow m) // Constructor
+        private MainWindowVM mainWindowVM;
+
+        public MusicPlayer(MainWindow m, MainWindowVM mainWindowVM) // Constructor
         {
             this.mainWindow = m;
+            this.mainWindowVM = mainWindowVM;
             InitTimer();
+            
         }
         private Track GetNextTrack()
         {
@@ -44,7 +49,6 @@ namespace Krusefy
                 {
                     track.DecrementQueue();
                 }
-                this.mainWindow.playlistViewer.Items.Refresh();
                 this.Queue.RemoveAt(0);
                 return nextTrack;
             }
@@ -58,8 +62,9 @@ namespace Krusefy
             return this.CurrentlyPlayingTrack.InPlaylist.GetPreviousTrack(this.CurrentlyPlayingTrack);
         }
 
-        internal void PlayTrack(Track trackToPlay)
+        internal async void PlayTrack(Track trackToPlay)
         {
+ 
             if (trackToPlay == null) { return; }
             this.mainWindow.playButtonViewmodel.IsPlaying = true;
             this.mainWindow.labelArtist.Content = trackToPlay.Artist;
@@ -72,26 +77,34 @@ namespace Krusefy
             }
             trackToPlay.SetIsPlaying(true);
             this.CurrentlyPlayingTrack = trackToPlay;
-            this.mainWindow.playlistViewer.Items.Refresh();
             this.mainWindow.playlistManager.Items.Refresh();
 
             DisposeWave();
 
-            this.SetAlbumArt(trackToPlay.Path);
+            this.mainWindow.Dispatcher.Invoke(() =>
+            {
+                mainWindowVM.AlbumArtViewerVM.LoadImageFromPath(trackToPlay.FindAlbumArt());
+                this.mainWindow.SetAccentColors(trackToPlay.FindAlbumArt());
+            });
 
-            Mp3FileReader mp3reader = new Mp3FileReader(trackToPlay.Path);
+            Mp3FileReader mp3reader = await Task.Run(() => getMp3Reader(trackToPlay));
             pcm = WaveFormatConversionStream.CreatePcmStream(mp3reader);
             stream = new BlockAlignReductionStream(pcm);
             output = new DirectSoundOut(200);
             trackLength = stream.TotalTime.TotalMilliseconds;
             trackPosition = 0;
-
             output.Init(stream);
             output.Play();
+
             nextCall = DateTime.Now.Ticks / 10000 + timeInterval;
             playbackTimer.Start();
 
             this.Waveforming(trackToPlay.Path);
+        }
+
+        private Mp3FileReader getMp3Reader(Track tracktoplay)
+        {
+            return new Mp3FileReader(tracktoplay.Path);
         }
 
         private async void Waveforming(string filePath)
@@ -159,60 +172,15 @@ namespace Krusefy
             }
         }
 
-        void SetAlbumArt(string trackPath)
-        {
-            // Look for album art in same folder as track
-            string[] splitString = trackPath.Split('\\');
-            string albumPath = null;
-            for(int i = 0; i<splitString.Length-1; i++)
-            {
-                albumPath += splitString[i] + '\\';
-            }
-            string[] files = Directory.GetFiles(albumPath);
-            foreach(string path in files)
-            {
-                splitString = path.Split('.');
-                string fileType = splitString[splitString.Length-1].ToLower();
-                if(fileType.EndsWith("jpg")||fileType.EndsWith("jpeg")||fileType.EndsWith("png"))
-                {
-                    mainWindow.Dispatcher.Invoke(() =>
-                    {
-                        mainWindow.SetAlbumArt(path);
-                    });
-
-                    return;
-                }
-            }
-        }
         void InitTimer()
         {
             playbackTimer = new DispatcherTimer(DispatcherPriority.SystemIdle);
             playbackTimer.Tick += new EventHandler(TimerEvent);
             playbackTimer.Interval = TimeSpan.FromMilliseconds(timeInterval);
         }
-        //void OnUpdateTimerTick(object sender,EventArgs e)
-        //{
 
-        //}
-        //void SetTimer(bool startTimer)
-        //{
-        //    //Start or stop the timer
-        //    if(startTimer) // Start the timer
-        //    {
-        //        if(playbackTimer!=null) playbackTimer.Close(); // Kill existing timer
-        //        playbackTimer = new Timer(timeInterval); // Make a new timer
-        //        playbackTimer.Elapsed += TimerEvent; // Add event
-        //        playbackTimer.Enabled = true; // Enable the timer
-        //        nextCall = DateTime.Now.Ticks; // Reset the next timer call
-        //    }
-        //    else // Stop the timer
-        //    {
-        //        playbackTimer.Close();
-        //    }
-        //}
         void TimerEvent(object source, EventArgs e)
         {
-            //Debug.WriteLine(trackPosition.ToString() + "|" + trackLength.ToString());
             long timeError = nextCall - DateTime.Now.Ticks / 10000; // Error on how much time it should have taken vs. how much it actually took
             long actTime = timeInterval - timeError; // How much time was actually spent between timer calls
 
@@ -253,7 +221,6 @@ namespace Krusefy
         {
             this.Queue.Add(track);
             track.Queue = this.Queue.Count.ToString();
-            this.mainWindow.playlistViewer.Items.Refresh();
         }
 
         internal void RemoveFromQueue(Track track)
@@ -266,7 +233,6 @@ namespace Krusefy
             }
             track.Queue = "";
             this.Queue.Remove(track);
-            this.mainWindow.playlistViewer.Items.Refresh();
         }
 
         public void PlayPause()

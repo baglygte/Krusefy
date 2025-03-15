@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Krusefy.PlaylistContentViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Krusefy"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <ListView x:Name="listView" Grid.Column="1" SelectionMode="Single"  ItemsSource="{Binding Playlist.Tracks}"
+          Background="#323232" Foreground="#FFFFFF" TextSearch.TextPath="Title"
+          BorderThickness="0" MouseDoubleClick="PlaylistContentViewer_MouseDoubleClick" MouseLeftButtonUp="PlaylistContentViewer_MouseLeftButtonUp">
+        <ListView.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Add to queue" Click="AddToQueue"/>
+                <MenuItem Header="Remove from queue" Click="RemoveFromQueue"/>
+            </ContextMenu>
+        </ListView.ContextMenu>
+        <ListView.View>
+            <GridView>
+                <GridView.Columns>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Queue}"
+                                Width="20" Header="Q" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=FirstIndex}" 
+                                Width="40" Header="#"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Title}" 
+                                Width="464" Header="Title"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Time}" 
+                                Width="52" Header="Time"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Artist}" 
+                                Width="299" Header="Artist"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Album}" 
+                                Width="279" Header="Album"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Year}" 
+                                Width="47" Header="Year"/>
+                </GridView.Columns>
+            </GridView>
+        </ListView.View>
+    </ListView>
+</UserControl>
