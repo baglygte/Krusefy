@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Krusefy
 {
     public class Track : INotifyPropertyChanged
     {
-        private bool _isPlaying;
+        private bool _isPlaying = false;
         private string _queue;
 
         public string Queue { get { return _queue; } set { _queue = value; OnPropertyChanged(); } }
@@ -28,15 +29,15 @@ namespace Krusefy
 
         internal Track(string[] splitLine)
         {
-            this.FirstIndex = this.parseIndex(splitLine[0]);
-            this.Title = splitLine[1];
-            this.Time = splitLine[2];
-            this.Artist = splitLine[3];
-            this.Album = splitLine[4];
-            this.Year = splitLine[5];
-            this.Path = splitLine[6];
-            this.IsPlaying = false;
+                this.FirstIndex = this.parseIndex(splitLine[0]);
+                this.Title = splitLine[1];
+                this.Time = splitLine[2];
+                this.Artist = splitLine[3];
+                this.Album = splitLine[4];
+                this.Year = splitLine[5];
+                this.Path = splitLine[6];
         }
+
         internal void SetIsPlaying(bool setValue)
         {
             this.IsPlaying = setValue;

@@ -16,7 +16,6 @@ namespace Krusefy
     {
         public List<Track> Tracks { get; private set; }
         public string Name { get; set; }
-        internal string ArtistDir { get; set; }
         public bool IsPlayingFrom { get; set; }
 
         internal Playlist(string name)
@@ -24,9 +23,13 @@ namespace Krusefy
             this.Name = name;
         }
 
-        internal void SetTracks(string[] fileLines)
+        internal void CreateTracks(string txtFilePath)
         {
-            this.Tracks = new List<Track> { };
+            if (!File.Exists(txtFilePath)) { return; }
+
+            string[] fileLines = File.ReadAllLines(txtFilePath);
+
+            this.Tracks = new List<Track> {};
             foreach(string line in fileLines)
             {
                 string[] splitLine = line.Split(new string[] { "||" }, StringSplitOptions.None);
@@ -66,95 +69,6 @@ namespace Krusefy
             }
         }
 
-        internal void CreateTxt()
-        {
-            // Looks through an artist directory and fills a .txt file with information about files
-            // in said directory
-            string playlistPath = ".\\playlists\\" + this.Name + ".txt";
-
-            if (!Directory.Exists(this.ArtistDir)) { return; }
-
-            StreamWriter sw = new StreamWriter(playlistPath);
-            string[] singlePaths;
-
-            try
-            {
-                singlePaths = Directory.GetFiles(this.ArtistDir);
-            }
-            catch (Exception)
-            {
-                return;
-            }
-            
-
-            foreach (string singlePath in singlePaths)
-            {
-                if (singlePath.EndsWith(".mp3"))
-                {
-                    string playlistString = GetTags(singlePath);
-                    playlistString += "||" + singlePath;
-                    sw.WriteLine(playlistString);
-                }
-                else if (singlePath.EndsWith(".jpg") | singlePath.EndsWith(".jpeg"))
-                {
-                    // Do nothing on purpose, so we only write to debug if we encountered an unknown file
-                }
-                else
-                {
-                    Debug.WriteLine("Unknown file encountered:" + singlePath);
-                }
-            }
-            string[] albumPaths = Directory.GetDirectories(this.ArtistDir);
-            foreach (string albumPath in albumPaths)
-            {
-                string[] trackPaths = Directory.GetFiles(albumPath);
-                foreach (string trackPath in trackPaths)
-                {
-                    if (trackPath.EndsWith(".mp3"))
-                    {
-                        string playlistString = GetTags(trackPath);
-                        playlistString += "||" + trackPath;
-                        sw.WriteLine(playlistString);
-                    }
-                    else if (trackPath.EndsWith(".jpg") | trackPath.EndsWith(".jpeg"))
-                    {
-                        // Do nothing on purpose, so we only write to debug if we encountered an unknown file
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Unknown file encountered: " + trackPath);
-                    }
-                }
-            }
-            sw.Close();
-        }
-
-        private string GetTags(string filepath)
-        {
-            TagLib.File trackFile = TagLib.File.Create(filepath);
-            string tagString;
-            uint trackNum = trackFile.Tag.Track; // Track number
-            uint discNum = trackFile.Tag.Disc; // Disc number
-            if (trackNum != 0)
-            {
-                if (discNum != 0) tagString = discNum.ToString() + "." + trackNum.ToString() + "||";
-                else tagString = trackNum.ToString() + "||";
-            }
-            else tagString = " ||";
-
-            string title = trackFile.Tag.Title; // Title
-            TimeSpan duration = trackFile.Properties.Duration;
-            string time = duration.Minutes.ToString().PadLeft(2, '0');
-            time += ":" + duration.Seconds.ToString().PadLeft(2, '0');
-            string artist = trackFile.Tag.FirstPerformer; // Artist
-            string album = trackFile.Tag.Album; // Album
-            string year = trackFile.Tag.Year.ToString(); // Year
-
-            tagString += title + "||" + time + "||" + artist + "||" + album + "||" + year;
-
-            return tagString;
-        }
-
         internal async void CreateJSON(string[] fileLines)
         {
             // Create a .json file of the displayed playlist
@@ -187,5 +101,7 @@ namespace Krusefy
             await swJSON.WriteLineAsync("]");
             swJSON.Close();
         }
+        
+        
     }
 }

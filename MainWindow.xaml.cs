@@ -25,7 +25,7 @@ namespace Krusefy
             InitializeComponent();
 
             MainWindowVM mainWindowVM = new MainWindowVM();
-            
+
             mainWindowVM.PlaylistContentViewerVM = new PlaylistContentViewerVM();
             mainWindowVM.AlbumArtViewerVM = new AlbumArtViewerVM();
 
@@ -33,16 +33,17 @@ namespace Krusefy
 
             MusicPlayer = new MusicPlayer(this, mainWindowVM);
             playlistHandler = new PlaylistHandler(this, mainWindowVM);
-            
-            //Server server = new Server(playlistHandler, playlistHandler.musicPlayer);
-            //server.Start();
-            
-            playlistHandler.Startup();
 
-            this.btnPlay.DataContext = playButtonViewmodel;
+            ////Server server = new Server(playlistHandler, playlistHandler.musicPlayer);
+            ////server.Start();
+            ///
 
-            // Prevent sleep
-            SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
+            playlistHandler.ReadPlaylistTxts();
+
+            //this.btnPlay.DataContext = playButtonViewmodel;
+
+            //// Prevent sleep
+            //SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
         }
 
         [FlagsAttribute]
@@ -65,8 +66,7 @@ namespace Krusefy
             DialogResult res = folderDiag.ShowDialog();
             if (res == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(folderDiag.SelectedPath))
             {
-                string[] directories = Directory.GetDirectories(folderDiag.SelectedPath);
-                playlistHandler.CreatePlaylists(directories);
+                playlistHandler.CreatePlaylistTxts(folderDiag.SelectedPath);
             }
         }
 
