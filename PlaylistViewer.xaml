@@ -6,5 +6,19 @@
              xmlns:local="clr-namespace:Krusefy"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+    <ListBox x:Name="listView"
+                  Grid.Column="1"
+                  Background="#323232" 
+                  BorderThickness="0" Margin="1"
+                  MinWidth="200"
+                  MouseDoubleClick="PlaylistViewer_MouseDoubleClick"
+                  TextSearch.TextPath="Name"
+                  KeyDown="PlaylistViewer_KeyDown"
+                  ItemsSource="{Binding Playlists}">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Label Content="{Binding Name}" Width="170"/>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>

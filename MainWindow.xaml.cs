@@ -28,6 +28,7 @@ namespace Krusefy
 
             mainWindowVM.PlaylistContentViewerVM = new PlaylistContentViewerVM();
             mainWindowVM.AlbumArtViewerVM = new AlbumArtViewerVM();
+            mainWindowVM.PlaylistViewerVM = new PlaylistViewerVM();
 
             DataContext = mainWindowVM;
 
@@ -87,18 +88,6 @@ namespace Krusefy
             seekbarWaveform.Source = waveform;
         }
 
-        private void PlaylistManager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (playlistManager.SelectedItem != null)
-            {
-                Playlist selectedPlaylist = (Playlist)playlistManager.SelectedItem;
-                
-                MainWindowVM mainWindowVM = (MainWindowVM)DataContext;
-                PlaylistContentViewerVM playlistContentViewerVM = mainWindowVM.PlaylistContentViewerVM;
-                playlistContentViewerVM.Playlist = selectedPlaylist;
-            }
-        }
-
         private void BtnPlay_Click(object sender, RoutedEventArgs e)
         {
             playlistHandler.musicPlayer.PlayPause();
@@ -123,18 +112,11 @@ namespace Krusefy
 
         private void NowPlaying_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            //if (playlistHandler.musicPlayer.CurrentlyPlayingTrack == null) { return; }
+            if (MusicPlayer.CurrentlyPlayingTrack == null) { return; }
 
-            //playlistHandler.SetActivePlaylist(playlistHandler.musicPlayer.CurrentlyPlayingTrack.InPlaylist);
-
-            //if (!(DataContext is MainWindowVM)) { return; }
-
-            //Track currentlyPlayingTrack = MusicPlayer.CurrentlyPlayingTrack;
-            //MainWindowVM mainWindowVM = DataContext as MainWindowVM;
-            //Dispatcher.Invoke(() =>
-            //{
-            //    mainWindowVM.AlbumArtViewerVM.LoadImageFromPath(currentlyPlayingTrack.FindAlbumArt());
-            //});
+            MainWindowVM mainWindowVM = (MainWindowVM)DataContext;
+            PlaylistContentViewerVM playlistContentViewerVM = mainWindowVM.PlaylistContentViewerVM;
+            playlistContentViewerVM.Playlist = MusicPlayer.CurrentlyPlayingTrack.InPlaylist;
         }
     }
 }

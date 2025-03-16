@@ -82,7 +82,6 @@ namespace Krusefy
             }
             trackToPlay.SetIsPlaying(true);
             this.CurrentlyPlayingTrack = trackToPlay;
-            this.mainWindow.playlistManager.Items.Refresh();
 
             DisposeWave();
 

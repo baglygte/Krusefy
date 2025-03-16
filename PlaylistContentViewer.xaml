@@ -12,8 +12,8 @@
           BorderThickness="0" MouseDoubleClick="PlaylistContentViewer_MouseDoubleClick" MouseLeftButtonUp="PlaylistContentViewer_MouseLeftButtonUp">
         <ListView.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Add to queue" Click="AddToQueue"/>
-                <MenuItem Header="Remove from queue" Click="RemoveFromQueue"/>
+                <MenuItem Header="Add to queue" Click="PlaylistContentViewer_AddToQueue"/>
+                <MenuItem Header="Remove from queue" Click="PlaylistContentViewer_RemoveFromQueue"/>
             </ContextMenu>
         </ListView.ContextMenu>
         <ListView.View>

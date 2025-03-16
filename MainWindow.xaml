@@ -127,19 +127,7 @@
             </Grid>
         </Grid>
 
-        <ListBox x:Name="playlistManager"
-                  Grid.Column="1"
-                  Background="#323232" 
-                  BorderThickness="0" Margin="1"
-                  MinWidth="200"
-                  MouseDoubleClick="PlaylistManager_MouseDoubleClick"
-                  TextSearch.TextPath="Name">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Label Content="{Binding Name}" Width="170"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <local:PlaylistViewer DataContext="{Binding PlaylistViewerVM}" Grid.Column="1"/>
     </Grid>
 </Window>
 

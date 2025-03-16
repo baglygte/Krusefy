@@ -15,14 +15,36 @@ using System.Windows.Shapes;
 
 namespace Krusefy
 {
-    /// <summary>
-    /// Interaction logic for PlaylistViewer.xaml
-    /// </summary>
     public partial class PlaylistViewer : UserControl
     {
+        private MainWindow MainWindow => (MainWindow)Window.GetWindow(this);
         public PlaylistViewer()
         {
             InitializeComponent();
+        }
+        private void PlaylistViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (listView.SelectedItem != null)
+            {
+                Playlist selectedPlaylist = (Playlist)listView.SelectedItem;
+
+                MainWindowVM mainWindowVM = (MainWindowVM)MainWindow.DataContext;
+                PlaylistContentViewerVM playlistContentViewerVM = mainWindowVM.PlaylistContentViewerVM;
+                playlistContentViewerVM.Playlist = selectedPlaylist;
+            }
+        }
+
+        private void PlaylistViewer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) { return; }
+            if (listView.SelectedItem != null)
+            {
+                Playlist selectedPlaylist = (Playlist)listView.SelectedItem;
+
+                MainWindowVM mainWindowVM = (MainWindowVM)MainWindow.DataContext;
+                PlaylistContentViewerVM playlistContentViewerVM = mainWindowVM.PlaylistContentViewerVM;
+                playlistContentViewerVM.Playlist = selectedPlaylist;
+            }
         }
     }
 }

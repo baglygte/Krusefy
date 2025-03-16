@@ -26,7 +26,7 @@ namespace Krusefy
             this.mainWindow = m;
             this.mainWindowVM = mainWindowVM;
             this.musicPlayer = m.MusicPlayer;
-            this.mainWindow.playlistManager.ItemsSource = this.Playlists;
+            this.mainWindowVM.PlaylistViewerVM.Playlists = Playlists;
         }
         public void ReadPlaylistTxts()
         {
@@ -127,8 +127,6 @@ namespace Krusefy
             Playlist playlist = new Playlist(playlistName);
             Playlists.Add(playlist);
             playlist.CreateTracks(PlaylistDirectory + playlistName + ".txt");
-
-            mainWindow.playlistManager.Items.Refresh();
         }
         private void PreparePlaylistsDirectory()
         {

@@ -8,8 +8,19 @@ using System.Threading.Tasks;
 
 namespace Krusefy
 {
-    class PlaylistViewerVM : INotifyPropertyChanged
+    public class PlaylistViewerVM : INotifyPropertyChanged
     {
+        private List<Playlist> _playlists;
+
+        public List<Playlist> Playlists
+        {
+            get { return _playlists; }
+            set
+            {
+                _playlists = value;
+                OnPropertyChanged();
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

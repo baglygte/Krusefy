@@ -42,13 +42,13 @@ namespace Krusefy
             MainWindow.MusicPlayer.PlayTrack((Track)listView.SelectedItem);
         }
 
-        private void RemoveFromQueue(object sender, RoutedEventArgs e)
+        private void PlaylistContentViewer_RemoveFromQueue(object sender, RoutedEventArgs e)
         {
             if (listView.SelectedItem == null) { return; }
             MainWindow.MusicPlayer.RemoveFromQueue((Track)listView.SelectedItem);
         }
 
-        private void AddToQueue(object sender, RoutedEventArgs e)
+        private void PlaylistContentViewer_AddToQueue(object sender, RoutedEventArgs e)
         {
             if (listView.SelectedItem == null) { return; }
 

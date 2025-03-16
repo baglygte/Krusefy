@@ -18,4 +18,4 @@ Timer doesn't stop after pausing - so when resuming, the next track plays if the
 Select multiple tracks - to add them to queue
 Lyrics panel
 ContextMenu style
-Enter to go into playlist ( in playlistviewer)
+Enter plays selected song (in playlistcontentviewer)

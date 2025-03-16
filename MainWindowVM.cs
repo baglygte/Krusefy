@@ -14,9 +14,7 @@ namespace Krusefy
     {
         public AlbumArtViewerVM AlbumArtViewerVM { get; set; }
         public PlaylistContentViewerVM PlaylistContentViewerVM { get; set; }
-
-        //public DelegateCommand<string> UpdateAlbumArtCommand { get { return new DelegateCommand<string>(OnUpdateAlbumArt); } }
-
+        public PlaylistViewerVM PlaylistViewerVM { get; set; }
 
         public void UpdateAlbumArt(string path)
         {
