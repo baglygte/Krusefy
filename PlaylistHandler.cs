@@ -10,6 +10,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Windows.Shapes;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Runtime.InteropServices;
 
 namespace Krusefy
 {
@@ -20,6 +21,7 @@ namespace Krusefy
         public MainWindow mainWindow;
         public MainWindowVM mainWindowVM;
         public MusicPlayer musicPlayer;
+        private object _synclock = new object();
 
         public PlaylistHandler(MainWindow m, MainWindowVM mainWindowVM)
         {
@@ -64,7 +66,7 @@ namespace Krusefy
         }
         private string CreateTxt(string artistFilePath)
         {
-            // Looks through an artist directory and fills a .txt file with information about files
+            // Look through an artist directory and fill a .txt file with information about files
             // in said directory
 
             if (!Directory.Exists(artistFilePath)) { return null; }
@@ -125,8 +127,11 @@ namespace Krusefy
         private void AddPlaylist(string playlistName)
         {
             Playlist playlist = new Playlist(playlistName);
-            Playlists.Add(playlist);
             playlist.CreateTracks(PlaylistDirectory + playlistName + ".txt");
+            lock (_synclock)
+            {
+                Playlists.Add(playlist);
+            }
         }
         private void PreparePlaylistsDirectory()
         {

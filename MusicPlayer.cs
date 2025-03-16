@@ -11,7 +11,6 @@ using System.Windows.Documents;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Threading;
 
 
@@ -37,7 +36,6 @@ namespace Krusefy
         private const string waveformFilename = "waveform.png";
 
         private MainWindowVM mainWindowVM;
-
         public MusicPlayer(MainWindow m, MainWindowVM mainWindowVM) // Constructor
         {
             this.mainWindow = m;
@@ -61,13 +59,11 @@ namespace Krusefy
 
             return this.CurrentlyPlayingTrack.InPlaylist.GetNextTrack(this.CurrentlyPlayingTrack);
         }
-
         private Track GetPreviousTrack()
         {
             if (this.CurrentlyPlayingTrack == null) { return null; }
             return this.CurrentlyPlayingTrack.InPlaylist.GetPreviousTrack(this.CurrentlyPlayingTrack);
         }
-
         internal async void PlayTrack(Track trackToPlay)
         {
             if (trackToPlay == null) { return; }
@@ -106,7 +102,6 @@ namespace Krusefy
 
             await RunWaveformingAsync(trackToPlay.Path);
         }
-
         private async Task RunWaveformingAsync(string mp3FilePath)
         {
 
@@ -126,7 +121,6 @@ namespace Krusefy
             waveformingCancellationTokenSource = new CancellationTokenSource();
             currentWaveformingTask = Waveforming(mp3FilePath, waveformingCancellationTokenSource.Token);
         }
-
         private async Task Waveforming(string mp3FilePath, CancellationToken token)
         {
             try
@@ -151,7 +145,6 @@ namespace Krusefy
             }
 
         }
-
         public BitmapImage BitmapFromUri(Uri source)
         {
             var bitmap = new BitmapImage();
@@ -201,19 +194,17 @@ namespace Krusefy
                 return sum / samplesRead;
             }
         }
-
         void InitTimer()
         {
             playbackTimer = new DispatcherTimer(DispatcherPriority.SystemIdle);
             playbackTimer.Tick += new EventHandler(TimerEvent);
             playbackTimer.Interval = TimeSpan.FromMilliseconds(timeInterval);
         }
-
         void TimerEvent(object source, EventArgs e)
         {
             long timeError = nextCall - DateTime.Now.Ticks / 10000; // Error on how much time it should have taken vs. how much it actually took
             long actTime = timeInterval - timeError; // How much time was actually spent between timer calls
-
+            Debug.WriteLine(actTime);
             if (actTime <= 0) // This occurs when the timer thread hangs
             {
                 Debug.WriteLine("Thread hanged.");
@@ -227,10 +218,7 @@ namespace Krusefy
                 return;
             }
 
-            mainWindow.Dispatcher.Invoke(() =>
-            { // Invoke an update in the seekbar value
-                mainWindow.seekbar.Value = (trackPosition / trackLength) * 100;
-            });
+            mainWindow.seekbar.Value = (trackPosition / trackLength) * 100;
             nextCall = DateTime.Now.Ticks / 10000 + timeInterval; // When the next timer call should ideally be
             playbackTimer.IsEnabled = true; // Enable the timer
         }
@@ -246,13 +234,11 @@ namespace Krusefy
             
             stream.Position = newPos; // Set the position of the stream
         }
-        
         internal void AddToQueue(Track track)
         {
             this.Queue.Add(track);
             track.Queue = this.Queue.Count.ToString();
         }
-
         internal void RemoveFromQueue(Track track)
         {
             if (!this.Queue.Contains(track)) return;
@@ -264,7 +250,6 @@ namespace Krusefy
             track.Queue = "";
             this.Queue.Remove(track);
         }
-
         public void PlayPause()
         {
             if (output == null)
@@ -278,21 +263,19 @@ namespace Krusefy
             else if (output.PlaybackState == PlaybackState.Paused)
             {
                 playbackTimer.Start();
+                nextCall = DateTime.Now.Ticks / 10000 + timeInterval;
                 output.Play(); 
                 this.mainWindow.playButtonViewmodel.IsPlaying = true;
             }
         }
-        
         public void Next()
         {
             PlayTrack(this.GetNextTrack());
-        }
-        
+        }       
         public void Prev()
         {
             PlayTrack(this.GetPreviousTrack());
         }
-
         private void DisposeWave()
         {
             if (output != null)

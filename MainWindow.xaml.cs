@@ -71,10 +71,11 @@ namespace Krusefy
             }
         }
 
-        public void SetAccentColors(string path)
+        public void SetAccentColors(string imagePath)
         {
+            if (!File.Exists(imagePath)) { return; }
             ClusterAnalyzer clusterAnalyzer = new ClusterAnalyzer();
-            var colors = clusterAnalyzer.GetAccentColors(new dwg.Bitmap(path));
+            var colors = clusterAnalyzer.GetAccentColors(new dwg.Bitmap(imagePath));
             Color primaryColor = Color.FromRgb((byte)colors[0].R, (byte)colors[0].G, (byte)colors[0].B);
             Color secondaryColor = Color.FromRgb((byte)colors[1].R, (byte)colors[1].G, (byte)colors[1].B);
 

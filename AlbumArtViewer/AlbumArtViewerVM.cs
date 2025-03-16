@@ -28,6 +28,11 @@ namespace Krusefy
 
         public void LoadImageFromPath(string path)
         {
+            if (path == null)
+            {
+                AlbumImage = new BitmapImage();
+                return;
+            }
             AlbumImage = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
         }
 

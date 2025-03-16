@@ -14,7 +14,6 @@ Clear queue
 Command window to show messages like
 	Found a .png image in this folder
 Volume slider
-Timer doesn't stop after pausing - so when resuming, the next track plays if the timer is too high
 Select multiple tracks - to add them to queue
 Lyrics panel
 ContextMenu style

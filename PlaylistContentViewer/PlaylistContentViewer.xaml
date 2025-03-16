@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <ListView x:Name="listView" Grid.Column="1" SelectionMode="Single"  ItemsSource="{Binding Playlist.Tracks}"
-          Background="#323232" Foreground="#FFFFFF" TextSearch.TextPath="Title"
+          Background="#323232" Foreground="#FFFFFF" TextSearch.TextPath="Title" Margin="-2"
           BorderThickness="0" MouseDoubleClick="PlaylistContentViewer_MouseDoubleClick" MouseLeftButtonUp="PlaylistContentViewer_MouseLeftButtonUp">
         <ListView.ContextMenu>
             <ContextMenu>

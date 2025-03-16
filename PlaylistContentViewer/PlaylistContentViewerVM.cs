@@ -11,7 +11,6 @@ namespace Krusefy
 {
     public class PlaylistContentViewerVM : INotifyPropertyChanged
     {
-        private readonly MainWindow _mainWindow;
         private Playlist _playlist;
 
         public Playlist Playlist
