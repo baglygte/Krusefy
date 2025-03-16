@@ -142,38 +142,38 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AlbumArtViewer.xaml.cs">
+    <Compile Include="AlbumArtViewer\AlbumArtViewer.xaml.cs">
       <DependentUpon>AlbumArtViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AlbumArtViewerVM.cs" />
+    <Compile Include="AlbumArtViewer\AlbumArtViewerVM.cs" />
     <Compile Include="DBSCAN\Cluster.cs" />
     <Compile Include="DBSCAN\ClusterAnalyzer.cs" />
     <Compile Include="MainWindowVM.cs" />
     <Compile Include="MusicPlayer.cs" />
     <Compile Include="PlayButtonVM.cs" />
     <Compile Include="Playlist.cs" />
-    <Compile Include="PlaylistContentViewer.xaml.cs">
+    <Compile Include="PlaylistContentViewer\PlaylistContentViewer.xaml.cs">
       <DependentUpon>PlaylistContentViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlaylistContentViewerVM.cs" />
+    <Compile Include="PlaylistContentViewer\PlaylistContentViewerVM.cs" />
     <Compile Include="PlaylistHandler.cs" />
-    <Compile Include="PlaylistViewer.xaml.cs">
+    <Compile Include="PlaylistViewer\PlaylistViewer.xaml.cs">
       <DependentUpon>PlaylistViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlaylistViewerVM.cs" />
+    <Compile Include="PlaylistViewer\PlaylistViewerVM.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Track.cs" />
-    <Page Include="AlbumArtViewer.xaml">
+    <Page Include="AlbumArtViewer\AlbumArtViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlaylistContentViewer.xaml">
+    <Page Include="PlaylistContentViewer\PlaylistContentViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlaylistViewer.xaml">
+    <Page Include="PlaylistViewer\PlaylistViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
