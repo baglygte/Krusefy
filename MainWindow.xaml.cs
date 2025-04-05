@@ -20,6 +20,9 @@ namespace Krusefy
         public SolidColorBrush Brush { get; set; }
         public MusicPlayer MusicPlayer { get; set; }
 
+        private IntPtr _hookId = IntPtr.Zero;
+        private HookProc _proc;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,9 +39,11 @@ namespace Krusefy
             MusicPlayer = new MusicPlayer(this, mainWindowVM);
             playlistHandler = new PlaylistHandler(this, mainWindowVM);
 
-            ////Server server = new Server(playlistHandler, playlistHandler.musicPlayer);
-            ////server.Start();
-            ///
+            _proc = HookCallback;
+            _hookId = SetHook(_proc);
+
+            Server server = new Server(playlistHandler, playlistHandler.musicPlayer);
+            server.Start();
 
             playlistHandler.ReadPlaylistTxts();
 
@@ -59,6 +64,84 @@ namespace Krusefy
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
+
+        private IntPtr SetHook(HookProc proc)
+        {
+            using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
+            using (var curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
+                    GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        private delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                if (IsMultimediaKey(vkCode))
+                {
+                    // Handle the multimedia key press
+                    HandleMultimediaKey(vkCode);
+                }
+            }
+            return CallNextHookEx(_hookId, nCode, wParam, lParam);
+        }
+
+        private bool IsMultimediaKey(int vkCode)
+        {
+            // Define the virtual key codes for multimedia keys
+            int[] multimediaKeys = { VK_MEDIA_PLAY_PAUSE, VK_MEDIA_STOP, VK_MEDIA_PREV_TRACK, VK_MEDIA_NEXT_TRACK };
+            return Array.Exists(multimediaKeys, key => key == vkCode);
+        }
+
+        private void HandleMultimediaKey(int vkCode)
+        {
+            switch (vkCode)
+            {
+                case VK_MEDIA_PLAY_PAUSE:
+                    MusicPlayer.PlayPause();
+                    break;
+                case VK_MEDIA_STOP:
+                    break;
+                case VK_MEDIA_PREV_TRACK:
+                    MusicPlayer.Prev();
+                    break;
+                case VK_MEDIA_NEXT_TRACK:
+                    MusicPlayer.Next();
+                    break;
+            }
+        }
+
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x0100;
+        private const int WM_SYSKEYDOWN = 0x0104;
+        private const int VK_MEDIA_PLAY_PAUSE = 0xB3;
+        private const int VK_MEDIA_STOP = 0xB2;
+        private const int VK_MEDIA_PREV_TRACK = 0xB1;
+        private const int VK_MEDIA_NEXT_TRACK = 0xB0;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        protected override void OnClosed(EventArgs e)
+        {
+            UnhookWindowsHookEx(_hookId);
+            base.OnClosed(e);
+        }
 
         private void BtnImport_Click(object sender, RoutedEventArgs e)
         {

@@ -17,3 +17,5 @@ Volume slider
 Select multiple tracks - to add them to queue
 Lyrics panel
 ContextMenu style
+Import (and re-import) single playlist
+Title bar style
