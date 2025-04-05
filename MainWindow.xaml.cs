@@ -24,6 +24,7 @@ namespace Krusefy
         {
             InitializeComponent();
 
+
             MainWindowVM mainWindowVM = new MainWindowVM();
 
             mainWindowVM.PlaylistContentViewerVM = new PlaylistContentViewerVM();
@@ -41,7 +42,7 @@ namespace Krusefy
 
             playlistHandler.ReadPlaylistTxts();
 
-            //this.btnPlay.DataContext = playButtonViewmodel;
+            this.btnPlay.DataContext = playButtonViewmodel;
 
             //// Prevent sleep
             //SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);

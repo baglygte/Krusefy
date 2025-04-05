@@ -54,5 +54,14 @@ namespace Krusefy
 
             MainWindow.MusicPlayer.AddToQueue((Track)listView.SelectedItem);
         }
+
+        private void PlaylistContentViewer_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) { return; }
+            if (listView.SelectedItem != null)
+            {
+                MainWindow.MusicPlayer.PlayTrack((Track)listView.SelectedItem);
+            }
+        }
     }
 }

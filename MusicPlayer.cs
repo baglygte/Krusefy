@@ -204,7 +204,6 @@ namespace Krusefy
         {
             long timeError = nextCall - DateTime.Now.Ticks / 10000; // Error on how much time it should have taken vs. how much it actually took
             long actTime = timeInterval - timeError; // How much time was actually spent between timer calls
-            Debug.WriteLine(actTime);
             if (actTime <= 0) // This occurs when the timer thread hangs
             {
                 Debug.WriteLine("Thread hanged.");

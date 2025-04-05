@@ -40,7 +40,8 @@ namespace Krusefy
             foreach (var info in dirInfo.EnumerateFiles())
             {
                 string[] splitstring = info.Name.Split('.');
-                AddPlaylist(splitstring[0]);
+                string playlistName = string.Join(".", splitstring.Take(splitstring.Length - 1));
+                AddPlaylist(playlistName);
             }
         }
         internal async void CreatePlaylistTxts(string folderPath)

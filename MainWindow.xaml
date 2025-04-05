@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Krusefy" xmlns:sys="clr-namespace:System;assembly=netstandard" d:DataContext="{d:DesignInstance Type=local:MainWindowVM}"
         mc:Ignorable="d"
-        Title="Krusefy Premium" Width="1280" Height="720" Background="#323232">
+        Title="Krusefy Premium" Width="1280" Height="720" Background="#323232" WindowStyle="SingleBorderWindow">
     <Window.Resources>
         <ResourceDictionary Source="StyleDictionary.xaml"/>
     </Window.Resources>
@@ -23,7 +23,7 @@
                 <RowDefinition Height="15"/>
             </Grid.RowDefinitions>
 
-            <ProgressBar x:Name="seekbar" Grid.Row="1" BorderThickness="0"
+            <ProgressBar x:Name="seekbar" Grid.Row="1" Margin="1" BorderThickness="0"
                         Background="{DynamicResource PrimaryAccent}" Foreground="{DynamicResource SecondaryAccent}"/>
 
             <Image x:Name="seekbarWaveform" Grid.Row="1" Stretch="Fill" MouseLeftButtonDown="Seekbar_MouseLeftButtonDown"/>
@@ -57,22 +57,19 @@
                     <local:AlbumArtViewer DataContext="{Binding AlbumArtViewerVM}" Grid.Row="0"/>
 
                     <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="1">
-                        <Label x:Name="labelTitle" Content="Title" HorizontalAlignment="Center" Padding="10"
+                        <Label x:Name="labelTitle" Content="Title" FontSize="10"
                                Style="{StaticResource NowPlaying}"
-                           FontWeight="Bold" FontSize="10"
                                MouseLeftButtonDown="NowPlaying_MouseLeftButtonDown"/>
                     </Viewbox>
                     
                     <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="2">
-                        <Label x:Name="labelArtist" Content="Artist" HorizontalAlignment="Center"  Padding="10"
-                               FontWeight="Bold" FontSize="20"
+                        <Label x:Name="labelArtist" Content="Artist" FontSize="20"
                                Style="{StaticResource NowPlaying}"
                                MouseLeftButtonDown="NowPlaying_MouseLeftButtonDown"/>
                     </Viewbox>
 
                     <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" Grid.Row="3">
-                        <Label x:Name="labelAlbum" Content="Album" HorizontalAlignment="Center"  Padding="10"
-                           FontWeight="Bold" FontSize="12"
+                        <Label x:Name="labelAlbum" Content="Album" FontSize="12"
                            Style="{StaticResource NowPlaying}"
                            MouseLeftButtonDown="NowPlaying_MouseLeftButtonDown"/>
                     </Viewbox>

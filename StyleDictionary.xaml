@@ -4,7 +4,7 @@
     <SolidColorBrush x:Key="SecondaryAccent">#FFFFFF</SolidColorBrush>
 
     <FontFamily x:Key="GlobalFont">Century Gothic</FontFamily>
-    
+       
     <Style TargetType="{x:Type GridViewColumnHeader}">
         <Setter Property="Template">
             <Setter.Value>
@@ -31,6 +31,9 @@
         </Style.Triggers>
     </Style>
     <Style x:Key="NowPlaying" TargetType="{x:Type Label}" BasedOn="{StaticResource {x:Type Label}}">
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="10"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource SecondaryAccent}"/>
